@@ -14,7 +14,7 @@ public void testOneLevelCache() {
 }
 ~~~
 
-![1536655016308](D:\GitRepositories\Article\Article\Images\Mybatis缓存1.png)
+![1536655016308](..\Images\Mybatis缓存1.png)
 
 
 
@@ -48,7 +48,7 @@ public void testTwoLevelCache() {
 }
 ~~~
 
-![1536656135757](D:\GitRepositories\Article\Article\Images\Mybatis缓存2.png)
+![1536656135757](..\Images\Mybatis缓存2.png)
 
 上述代码虽然属于不同`SqlSession`但是也只发送了一次sql到数据库进行查询。
 
