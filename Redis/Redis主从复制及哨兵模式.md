@@ -29,7 +29,27 @@ slaveof 127.0.0.1 7001
 
 Redis主从复制可以将master的数据复制到slave中，但是slave默认是只读的，无法在slave中进行set操作，即无法实现**自动故障转移**。通过哨兵模式可以实现：当master服务down了之后，slave替代master成为主机，当原master恢复后自动成为slave。
 
+修改sentinel.conf文件：
 
+~~~c
+# sentinel monitor [master-group-name] [ip] [port] [quorum]
+sentinel monitor mymaster 127.0.0.1 7001 1
+~~~
+
+通过以下命令运行哨兵：
+
+~~~c
+./redis-sentinel ../sentinel.conf
+~~~
+
+#### 哨兵工作模式
+
+> - 每个 Sentinel 以**每秒钟一次**的频率向它所知的主服务器、从服务器以及其他 Sentinel 实例发送一个 PING 命令。
+> - 如果一个实例（instance）距离最后一次有效回复 PING 命令的时间超过 `down-after-milliseconds` 选项所指定的值， 那么这个实例会被 Sentinel 标记为主观下线。 一个有效回复可以是： +PONG 、 -LOADING 或者 -MASTERDOWN 。
+> - 如果一个主服务器被标记为主观下线， 那么正在监视这个主服务器的所有 Sentinel 要以**每秒一次**的频率确认主服务器的确进入了主观下线状态。
+> - 如果一个主服务器被标记为主观下线， 并且有足够数量的 Sentinel （至少要达到配置文件指定的数量,`quorum`）在指定的时间范围内同意这一判断， 那么这个主服务器被标记为客观下线。
+> - 在一般情况下， 每个 Sentinel 会以**每 10 秒一次**的频率向它已知的所有主服务器和从服务器发送 INFO 命令。 当一个主服务器被 Sentinel 标记为客观下线时， Sentinel 向下线主服务器的所有从服务器发送 INFO 命令的频率会从 **10 秒一次**改为**每秒一次**。
+> - 当没有足够数量的 Sentinel 同意主服务器已经下线， 主服务器的客观下线状态就会被移除。 当主服务器重新向 Sentinel 的 PING 命令返回有效回复时， 主服务器的主管下线状态就会被移除。
 
 
 
